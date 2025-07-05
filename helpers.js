@@ -2,12 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const { logger, memoryTransport } = require("./logger");
 const { sendEmail } = require("./mailer");
+import { PRODUCCION_ACTIVADO } from "./dac";
 
 const envFilePath = path.join(__dirname, ".env");
 
-const EMAIL_VITAGE = process.env.EMAIL_ETIQUETA
+const EMAIL_VITAGE = process.env.EMAIL_ETIQUETA;
 const EMAIL_DEV = process.env.EMAIL_DEV;
-const EMAIL_LOGS = `${process.env.EMAIL_DEV}, ${process.env.EMAIL_ETIQUETA}`
+const EMAIL_LOGS = `${process.env.EMAIL_DEV}, ${process.env.EMAIL_ETIQUETA}`;
 
 // -----------------------------------------------------------------------------
 // enviarLogsPorCorreo
@@ -23,7 +24,6 @@ const EMAIL_LOGS = `${process.env.EMAIL_DEV}, ${process.env.EMAIL_ETIQUETA}`
  * @param {string} tablaDatosCliente - An HYML table with the client basic information.
  */
 const enviarLogsPorCorreo = (tablaDatosCliente, getPegoteResponse) => {
-  
   const logs = memoryTransport.getLogs();
 
   // Construct the email message with log details.
@@ -41,7 +41,9 @@ const enviarLogsPorCorreo = (tablaDatosCliente, getPegoteResponse) => {
   const contieneWarnings = logs.some((log) => log.level === "warn");
 
   // Set the email subject based on log severity.
-  let asunto = "Proceso exitoso";
+  let asunto = PRODUCCION_ACTIVADO
+    ? "Proceso exitoso"
+    : "[TESTING] Proceso exitoso";
   if (contieneErrores) {
     asunto = "Hubo errores en el proceso";
   } else if (contieneWarnings) {
@@ -62,11 +64,10 @@ const enviarLogsPorCorreo = (tablaDatosCliente, getPegoteResponse) => {
 // -----------------------------------------------------------------------------
 
 const enviarEmailACliente = (info) => {
-  
   const emailCliente = info.datosCliente["Correo"];
-  
+
   let asunto = `📦 ¡Tu pedido de VitAge fue despachado a DAC y pronto estará en camino!`;
-  
+
   // Construct the email message with log details.
   let mensajeCorreo = `<p>Estimada/o ${info.datosCliente["Nombre"]},</p>
 <p>
@@ -98,11 +99,13 @@ const enviarEmailACliente = (info) => {
   nosotros! ✨🌿
 </p>
 <p>Saludos,<br />El equipo de VitAge</p>`;
-  
+
   // Send the email and log the result.
   sendEmail(emailCliente, EMAIL_LOGS, asunto, mensajeCorreo)
     .then(() => logger.info("Correo enviado exitosamente al cliente."))
-    .catch((error) => logger.info("Error al enviar el correo para el cliente:", error.message));
+    .catch((error) =>
+      logger.info("Error al enviar el correo para el cliente:", error.message)
+    );
 };
 
 // -----------------------------------------------------------------------------
@@ -119,14 +122,16 @@ const enviarEmailACliente = (info) => {
  * @returns {string} HTML string representing a table with the client's details.
  */
 const generateClientTableInfo = (datosCliente) => {
-
   // Build table rows for each non-empty key-value pair.
   const rows = Object.entries(datosCliente)
     .filter(([_, value]) => value !== "")
     .map(
       ([key, value]) => `
       <tr>
-        <td style="padding: 2px 8px; border: 1px solid #ddd;"><strong>${key.replace(/_/g, " ")}</strong></td>
+        <td style="padding: 2px 8px; border: 1px solid #ddd;"><strong>${key.replace(
+          /_/g,
+          " "
+        )}</strong></td>
         <td style="padding: 2px 8px; border: 1px solid #ddd;">${value}</td>
       </tr>`
     )

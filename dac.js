@@ -3,7 +3,8 @@ const fs = require("fs");
 const { logger } = require("./logger");
 const util = require("util"); // for logging with { depth: null } to avoid circular references
 
-const PRODUCCION_ACTIVADO = true;
+export const PRODUCCION_ACTIVADO =
+  process.env.ENTORNO === "PRODUCCION" ? true : false;
 let DAC_USER_ID;
 let DAC_USER_PASS;
 let DAC_WS;
@@ -42,7 +43,7 @@ async function loginToDAC() {
     const response = await axios.get(DAC_WS_LOGIN_URL, {
       params: { Login: DAC_USER_ID, Contrasenia: DAC_USER_PASS },
     });
-    
+
     const { data } = response;
 
     if (data.result === 0 && data.data.length > 0) {
@@ -79,11 +80,19 @@ async function logOutFromDAC(dacSessionId) {
     const { data } = response;
     if (data.result === 0) {
       logger.info(
-        `logOutFromDAC() -> DAC Logout successful: ${JSON.stringify(data.data, null, 2)}`
+        `logOutFromDAC() -> DAC Logout successful: ${JSON.stringify(
+          data.data,
+          null,
+          2
+        )}`
       );
     } else {
       logger.error(
-        `logOutFromDAC() -> DAC Logout failed: ${JSON.stringify(data.data, null, 2)}`
+        `logOutFromDAC() -> DAC Logout failed: ${JSON.stringify(
+          data.data,
+          null,
+          2
+        )}`
       );
       throw new Error("Invalid session ID or already closed.");
     }
@@ -109,9 +118,8 @@ async function logOutFromDAC(dacSessionId) {
  */
 async function wsInGuia_Levante(dacSessionId, shopifyPayload) {
   try {
-    
     // logger.info(`shopifyPayload: ${JSON.stringify(shopifyPayload, null, 2)}`);
-    
+
     const datosEntrega = shopifyPayload.shipping_address;
 
     const cliente = {
@@ -137,7 +145,7 @@ async function wsInGuia_Levante(dacSessionId, shopifyPayload) {
       Direccion_Destinatario: cliente["Dirección"],
       Telefono: cliente["Teléfono"],
       Rut: "",
-      K_Oficina_Destino: 0, // Vacío porque siempre mandamos a Direccion_Destinatario 
+      K_Oficina_Destino: 0, // Vacío porque siempre mandamos a Direccion_Destinatario
       Entrega: 2, // 2 es "Entrega en domicilio". Siempre mandamos a Direccion_Destinatario. Aún si es a una agencia DAC.
       Paquetes_Ampara: 1, // Siempre será un paquete/etiqueta
       Detalle_Paquetes: JSON.stringify([{ Cantidad: 1, Tipo: 1 }]),
@@ -150,31 +158,33 @@ async function wsInGuia_Levante(dacSessionId, shopifyPayload) {
       Latitud_Destino: "",
       Longitud_Destino: "",
     };
-    
+
     // logger.info(`#1. inGuiaLevanteParams: ${JSON.stringify(inGuiaLevanteParams, null, 2)}`);
-    
+
     logger.info(`DAC_WS_IN_GUIA_LEVANTE URL: ${DAC_WS_IN_GUIA_LEVANTE}`);
 
     const response = await axios.get(DAC_WS_IN_GUIA_LEVANTE, {
       params: inGuiaLevanteParams,
     });
-    
+
     const wsInGuiaResponseData = util.inspect(response.data, { depth: null });
-    logger.info(`#2. Repuesta de wsInGuia_Levante(). response.data: ${wsInGuiaResponseData}`); 
-    
+    logger.info(
+      `#2. Repuesta de wsInGuia_Levante(). response.data: ${wsInGuiaResponseData}`
+    );
+
     const responseOk = response.data.result === 0;
 
     if (responseOk) {
       logger.info("#3. Éxito en wsInGuia_Levante()");
-      
-      // K_Guia retorna un número similar al siguiente: 
+
+      // K_Guia retorna un número similar al siguiente:
       // "170-3052882"
       // El K_Oficina proviente de la parte previa al guión (170)
       // El K_Guia proviente de la parte posterior al guión (3052882)
       const K_Parts = response.data.data.K_Guia.split("-");
       const K_Oficina = K_Parts[0];
       const K_Guia = K_Parts[1];
-      
+
       return {
         ok: true,
         codigoRastreo: response.data.data.Codigo_Rastreo,
@@ -182,59 +192,53 @@ async function wsInGuia_Levante(dacSessionId, shopifyPayload) {
           K_Oficina: K_Oficina, // Destino
           K_Guia: K_Guia,
           CodigoPedido: "", // custom Id. Dejar vacío si queremos el que genera DAC.
-          ID_Sesion: dacSessionId
+          ID_Sesion: dacSessionId,
         },
         datosCliente: cliente,
       };
     }
 
-    
     return { ok: false, response: response };
   } catch (error) {
-    
     logger.error(`#4. Error en wsInGuia_Levante(): ${error.message}`);
     throw error;
   }
 }
 
 async function wsGetpegote(pegoteParams) {
-  
   let pegoteResponse = false;
   try {
     pegoteResponse = await axios.get(DAC_WS_GET_PEGOTE, {
       params: pegoteParams,
-    }); 
-      
+    });
+
     const resultOk = pegoteResponse.data.result === 0;
 
-    if(resultOk) {
-      try { 
+    if (resultOk) {
+      try {
         const pegoteResponseData = pegoteResponse.data.data;
-        const base64_pegote_PDF = pegoteResponseData.Pegote;   
+        const base64_pegote_PDF = pegoteResponseData.Pegote;
         const pegote_buffer = Buffer.from(base64_pegote_PDF, "base64");
         const pegote_pdf = fs.writeFileSync("etiqueta.pdf", pegote_buffer);
         // console.log("pegote_pdf", pegote_pdf);
         logger.info(`Éxito creando etiqueta (wsGetPegote)`);
         return {
           resultOk: true,
-          pdf: pegote_pdf
+          pdf: pegote_pdf,
         };
-      }
-      catch (error) {
+      } catch (error) {
         logger.error(`Error procesando PDF de etiqueta (wsGetPegote)`, error);
       }
-     
     } else {
       logger.error(`Resultado fallido de wsGetPegote`);
       return {
         resultOk: false,
-        pdf: null
+        pdf: null,
       };
     }
 
     return pegoteResponse;
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(`Error en wsGetpegote(): ${error.message}`);
     throw error;
   }
@@ -247,5 +251,5 @@ module.exports = {
   loginToDAC,
   logOutFromDAC,
   wsInGuia_Levante,
-  wsGetpegote
+  wsGetpegote,
 };
