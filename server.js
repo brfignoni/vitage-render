@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const express = require("express");
 const app = express();
 const NodeCache = require("node-cache");
-import { PRODUCCION_ACTIVADO } from "./dac";
+const { PRODUCCION_ACTIVADO } = require("./dac");
 
 const PORT = process.env.PORT || 3000;
 const eventCache = new NodeCache({

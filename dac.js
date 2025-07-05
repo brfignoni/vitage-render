@@ -3,8 +3,7 @@ const fs = require("fs");
 const { logger } = require("./logger");
 const util = require("util"); // for logging with { depth: null } to avoid circular references
 
-export const PRODUCCION_ACTIVADO =
-  process.env.ENTORNO === "PRODUCCION" ? true : false;
+const PRODUCCION_ACTIVADO = process.env.ENTORNO === "PRODUCCION" ? true : false;
 let DAC_USER_ID;
 let DAC_USER_PASS;
 let DAC_WS;

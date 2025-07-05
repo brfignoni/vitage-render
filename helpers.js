@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { logger, memoryTransport } = require("./logger");
 const { sendEmail } = require("./mailer");
-import { PRODUCCION_ACTIVADO } from "./dac";
+const { PRODUCCION_ACTIVADO } = require("./dac");
 
 const envFilePath = path.join(__dirname, ".env");
 
