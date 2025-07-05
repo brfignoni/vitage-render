@@ -20,6 +20,8 @@ const {
   apiResponse,
 } = require("./helpers");
 
+console.log(`This is the vitAge render server.`);
+
 // Middleware to capture raw body
 app.use(
   express.json({
