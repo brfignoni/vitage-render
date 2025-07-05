@@ -1,0 +1,22 @@
+{
+  "name": "glitch-hello-node",
+  "version": "0.1.0",
+  "description": "A simple Node app built on fastify, instantly up and running. Built to be remixed on Glitch.com.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "8.1.4",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "node-cache": "^5.1.2",
+    "nodemailer": "^6.9.16",
+    "winston": "^3.17.0",
+    "winston-transport": "^4.9.0"
+  },
+  "engines": {
+    "node": "14.x"
+  }
+}
