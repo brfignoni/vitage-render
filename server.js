@@ -21,6 +21,7 @@ const {
 } = require("./helpers");
 
 console.log(`This is the vitAge render server.`);
+console.log(`Running on environment: ${process.env.ENTORNO}`);
 
 // Middleware to capture raw body
 app.use(
