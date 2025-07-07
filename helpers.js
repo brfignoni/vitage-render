@@ -40,10 +40,14 @@ const enviarLogsPorCorreo = (tablaDatosCliente, getPegoteResponse) => {
   const contieneErrores = logs.some((log) => log.level === "error");
   const contieneWarnings = logs.some((log) => log.level === "warn");
 
-  // Set the email subject based on log severity.
-  let asunto = PRODUCCION_ACTIVADO
-    ? "Proceso exitoso"
-    : "[TESTING] Proceso exitoso";
+  let asunto;
+
+  if (PRODUCCION_ACTIVADO) {
+    asunto = "Proceso exitoso";
+  } else {
+    asunto = "[TESTING] Proceso exitoso";
+  }
+
   if (contieneErrores) {
     asunto = "Hubo errores en el proceso";
   } else if (contieneWarnings) {
