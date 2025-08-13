@@ -47,7 +47,6 @@ const enviarLogsPorCorreo = (
   const contieneWarnings = logs.some((log) => log.level === "warn");
 
   let asunto;
-  const asuntoDetail = 
 
   if (produccionActivado) {
     asunto = `Proceso exitoso`;
