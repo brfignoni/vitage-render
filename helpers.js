@@ -4,6 +4,8 @@ const { logger, memoryTransport } = require("./logger");
 const { sendEmail } = require("./mailer");
 const { PRODUCCION_ACTIVADO } = require("./dac");
 
+console.log("PRODUCCION_ACTIVADO en helpers.js", PRODUCCION_ACTIVADO);
+
 const envFilePath = path.join(__dirname, ".env");
 
 const EMAIL_VITAGE = process.env.EMAIL_ETIQUETA;

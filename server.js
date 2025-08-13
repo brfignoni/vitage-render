@@ -4,6 +4,8 @@ const app = express();
 const NodeCache = require("node-cache");
 const { PRODUCCION_ACTIVADO } = require("./dac");
 
+console.log("PRODUCCION_ACTIVADO en server.js", PRODUCCION_ACTIVADO);
+
 const PORT = process.env.PORT || 3000;
 const eventCache = new NodeCache({
   stdTTL: 300,
@@ -20,6 +22,7 @@ const {
   apiResponse,
 } = require("./helpers");
 
+console.log(`hola #1`);
 console.log(`This is the vitAge render server.`);
 console.log(`Running on environment: ${process.env.ENTORNO}`);
 
