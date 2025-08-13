@@ -2,9 +2,8 @@ const crypto = require("crypto");
 const express = require("express");
 const app = express();
 const NodeCache = require("node-cache");
-const { PRODUCCION_ACTIVADO } = require("./dac");
 
-console.log("PRODUCCION_ACTIVADO en server.js", PRODUCCION_ACTIVADO);
+const PRODUCCION_ACTIVADO = process.env.ENTORNO === "PRODUCCION" ? true : false;
 
 const PORT = process.env.PORT || 3000;
 const eventCache = new NodeCache({

@@ -2,9 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const { logger, memoryTransport } = require("./logger");
 const { sendEmail } = require("./mailer");
-const { PRODUCCION_ACTIVADO } = require("./dac");
 
-console.log("PRODUCCION_ACTIVADO en helpers.js", PRODUCCION_ACTIVADO);
+const PRODUCCION_ACTIVADO = process.env.ENTORNO === "PRODUCCION" ? true : false;
 
 const envFilePath = path.join(__dirname, ".env");
 

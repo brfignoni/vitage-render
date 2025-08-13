@@ -5,10 +5,6 @@ const util = require("util"); // for logging with { depth: null } to avoid circu
 
 const PRODUCCION_ACTIVADO = process.env.ENTORNO === "PRODUCCION" ? true : false;
 
-module.exports = {
-  PRODUCCION_ACTIVADO,
-};
-
 let DAC_USER_ID;
 let DAC_USER_PASS;
 let DAC_WS;
