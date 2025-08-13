@@ -117,7 +117,8 @@ app.post("/webhook", async (req, res) => {
     } finally {
       void enviarLogsPorCorreo(
         infoParaEmail.tablaDatosCliente,
-        getPegoteResponse
+        getPegoteResponse,
+        PRODUCCION_ACTIVADO
       ); // Background task
     }
   });

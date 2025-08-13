@@ -3,8 +3,6 @@ const path = require("path");
 const { logger, memoryTransport } = require("./logger");
 const { sendEmail } = require("./mailer");
 
-const PRODUCCION_ACTIVADO = process.env.ENTORNO === "PRODUCCION" ? true : false;
-
 const envFilePath = path.join(__dirname, ".env");
 
 const EMAIL_VITAGE = process.env.EMAIL_ETIQUETA;
@@ -24,7 +22,11 @@ const EMAIL_LOGS = `${process.env.EMAIL_DEV}, ${process.env.EMAIL_ETIQUETA}`;
  *
  * @param {string} tablaDatosCliente - An HYML table with the client basic information.
  */
-const enviarLogsPorCorreo = (tablaDatosCliente, getPegoteResponse) => {
+const enviarLogsPorCorreo = (
+  tablaDatosCliente,
+  getPegoteResponse,
+  produccionActivado
+) => {
   const logs = memoryTransport.getLogs();
 
   // Construct the email message with log details.
@@ -43,7 +45,7 @@ const enviarLogsPorCorreo = (tablaDatosCliente, getPegoteResponse) => {
 
   let asunto;
 
-  if (PRODUCCION_ACTIVADO) {
+  if (produccionActivado) {
     asunto = "Proceso exitoso";
   } else {
     asunto = "[TESTING] Proceso exitoso";
