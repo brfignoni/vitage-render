@@ -25,7 +25,7 @@ const {
 const ahora = new Date();
 const horas = ahora.getHours().toString().padStart(2, "0");
 const minutos = ahora.getMinutes().toString().padStart(2, "0");
-console.log(`${horas}:${minutos}`);
+console.log(`Time: ${horas}:${minutos}`);
 
 console.log(`This is the vitAge render server.`);
 console.log(`Running on environment: ${process.env.ENTORNO}`);
@@ -122,6 +122,8 @@ app.post("/webhook", async (req, res) => {
     } finally {
       void enviarLogsPorCorreo(
         infoParaEmail.tablaDatosCliente,
+        infoParaEmail.codigoRastreo,
+        infoParaEmail.datosCliente,
         getPegoteResponse,
         PRODUCCION_ACTIVADO
       ); // Background task

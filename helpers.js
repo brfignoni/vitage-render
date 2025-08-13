@@ -24,13 +24,16 @@ const EMAIL_LOGS = `${process.env.EMAIL_DEV}, ${process.env.EMAIL_ETIQUETA}`;
  */
 const enviarLogsPorCorreo = (
   tablaDatosCliente,
+  codigoRastreo,
+  datosCliente,
   getPegoteResponse,
   produccionActivado
 ) => {
   console.log("produccionActivado en enviarLogsPorCorreo", produccionActivado);
   const logs = memoryTransport.getLogs();
 
-  console.log("logs", logs);
+  console.log("codigoRastreo", codigoRastreo);
+  console.log("datosCliente", datosCliente);
 
   // Construct the email message with log details.
   let mensajeCorreo = `<strong>📝 Detalle de los eventos</strong>: <br><div style="font-family: 'Courier New', Courier, monospace;">`;
