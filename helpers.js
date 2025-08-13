@@ -27,6 +27,7 @@ const enviarLogsPorCorreo = (
   getPegoteResponse,
   produccionActivado
 ) => {
+  console.log("produccionActivado en enviarLogsPorCorreo", produccionActivado);
   const logs = memoryTransport.getLogs();
 
   // Construct the email message with log details.
