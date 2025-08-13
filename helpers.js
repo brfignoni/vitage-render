@@ -32,9 +32,6 @@ const enviarLogsPorCorreo = (
   console.log("produccionActivado en enviarLogsPorCorreo", produccionActivado);
   const logs = memoryTransport.getLogs();
 
-  console.log("codigoRastreo", codigoRastreo);
-  console.log("datosCliente", datosCliente);
-
   // Construct the email message with log details.
   let mensajeCorreo = `<strong>📝 Detalle de los eventos</strong>: <br><div style="font-family: 'Courier New', Courier, monospace;">`;
   mensajeCorreo += logs
@@ -50,11 +47,12 @@ const enviarLogsPorCorreo = (
   const contieneWarnings = logs.some((log) => log.level === "warn");
 
   let asunto;
+  const asuntoDetail = `${codigoRastreo} - ${datosCliente["Nombre Completo"]}`;
 
   if (produccionActivado) {
-    asunto = `Proceso exitoso`;
+    asunto = `Proceso exitoso: ${asuntoDetail}`;
   } else {
-    asunto = `[TESTING] Proceso exitoso`;
+    asunto = `[TESTING] Proceso exitoso: ${asuntoDetail}`;
   }
 
   if (contieneErrores) {

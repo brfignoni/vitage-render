@@ -21,13 +21,14 @@ const {
   apiResponse,
 } = require("./helpers");
 
-// console log del momento para validar que el commit llegó.
-const ahora = new Date();
-const horas = ahora.getHours().toString().padStart(2, "0");
-const minutos = ahora.getMinutes().toString().padStart(2, "0");
-console.log(`Time: ${horas}:${minutos}`);
+if (!PRODUCCION_ACTIVADO) {
+  // console log del momento para validar que el commit llegó.
+  const ahora = new Date();
+  const horas = ahora.getHours().toString().padStart(2, "0");
+  const minutos = ahora.getMinutes().toString().padStart(2, "0");
+  console.log(`Time: ${horas}:${minutos}`);
+}
 
-console.log(`This is the vitAge render server.`);
 console.log(`Running on environment: ${process.env.ENTORNO}`);
 
 // Middleware to capture raw body
